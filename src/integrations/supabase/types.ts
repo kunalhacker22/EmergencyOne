@@ -14,7 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      control_users: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      emergency_reports: {
+        Row: {
+          additional_notes: string | null
+          created_at: string
+          id: string
+          incident_id: string | null
+          media_urls: string[] | null
+          reporter_name: string | null
+          reporter_phone: string | null
+        }
+        Insert: {
+          additional_notes?: string | null
+          created_at?: string
+          id?: string
+          incident_id?: string | null
+          media_urls?: string[] | null
+          reporter_name?: string | null
+          reporter_phone?: string | null
+        }
+        Update: {
+          additional_notes?: string | null
+          created_at?: string
+          id?: string
+          incident_id?: string | null
+          media_urls?: string[] | null
+          reporter_name?: string | null
+          reporter_phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_reports_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incidents: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          latitude: number
+          location_name: string
+          longitude: number
+          responders_assigned: number | null
+          severity: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude: number
+          location_name: string
+          longitude: number
+          responders_assigned?: number | null
+          severity: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number
+          location_name?: string
+          longitude?: number
+          responders_assigned?: number | null
+          severity?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      responders: {
+        Row: {
+          created_at: string
+          current_location_lat: number | null
+          current_location_lng: number | null
+          id: string
+          name: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_location_lat?: number | null
+          current_location_lng?: number | null
+          id?: string
+          name: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_location_lat?: number | null
+          current_location_lng?: number | null
+          id?: string
+          name?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

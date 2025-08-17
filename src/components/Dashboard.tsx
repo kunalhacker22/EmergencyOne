@@ -1,9 +1,81 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IncidentMap } from "@/components/IncidentMap";
-import { IncidentList } from "@/components/IncidentList";
-import { MapPin, Clock, Users, AlertCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Clock, Users, RefreshCw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { IncidentMap } from "./IncidentMap";
+import { IncidentList } from "./IncidentList";
 
-export const Dashboard = () => {
+interface DashboardProps {
+  onUpdateIncidentStatus?: (incidentId: string, newStatus: string) => void;
+}
+
+export const Dashboard = ({ onUpdateIncidentStatus }: DashboardProps) => {
+  const [incidents, setIncidents] = useState<any[]>([]);
+  const [responders, setResponders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchIncidents();
+    fetchResponders();
+
+    // Set up real-time subscription for incidents
+    const channel = supabase
+      .channel('incidents-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'incidents'
+        },
+        () => {
+          fetchIncidents();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const fetchIncidents = async () => {
+    const { data, error } = await supabase
+      .from("incidents")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching incidents:", error);
+    } else {
+      setIncidents(data || []);
+    }
+    setLoading(false);
+  };
+
+  const fetchResponders = async () => {
+    const { data, error } = await supabase
+      .from("responders")
+      .select("*")
+      .order("name");
+
+    if (error) {
+      console.error("Error fetching responders:", error);
+    } else {
+      setResponders(data || []);
+    }
+  };
+
+  const getResponderCounts = () => {
+    const available = responders.filter(r => r.status === 'available').length;
+    const enRoute = responders.filter(r => r.status === 'en_route').length;
+    const onScene = responders.filter(r => r.status === 'on_scene').length;
+    return { available, enRoute, onScene };
+  };
+
+  const { available, enRoute, onScene } = getResponderCounts();
+
   return (
     <section className="py-16 px-6">
       <div className="max-w-7xl mx-auto">
@@ -17,55 +89,55 @@ export const Dashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Map Section */}
-          <div className="lg:col-span-2">
-            <Card className="h-full">
+          <div className="col-span-2 lg:col-span-1">
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MapPin className="h-5 w-5 mr-2 text-primary" />
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-emergency" />
                   Incident Locations
+                  {loading && <RefreshCw className="w-4 h-4 animate-spin" />}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
-                <IncidentMap />
+              <CardContent>
+                <IncidentMap incidents={incidents} />
               </CardContent>
             </Card>
           </div>
 
-          {/* Incident List */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <AlertCircle className="h-5 w-5 mr-2 text-primary" />
-                  Active Incidents
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-warning" />
+                  Active Incidents ({incidents.filter(i => i.status === 'active').length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <IncidentList />
+                <IncidentList incidents={incidents} onUpdateStatus={onUpdateIncidentStatus} />
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="h-5 w-5 mr-2 text-primary" />
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-success" />
                   Response Teams
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Available Units</span>
-                  <span className="font-semibold text-emergency-safe">12</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">En Route</span>
-                  <span className="font-semibold text-emergency-warning">4</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">On Scene</span>
-                  <span className="font-semibold text-emergency-critical">2</span>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Available Units</span>
+                    <Badge variant="secondary">{available}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">En Route</span>
+                    <Badge variant="outline" className="border-warning text-warning">{enRoute}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">On Scene</span>
+                    <Badge variant="outline" className="border-emergency text-emergency">{onScene}</Badge>
+                  </div>
                 </div>
               </CardContent>
             </Card>

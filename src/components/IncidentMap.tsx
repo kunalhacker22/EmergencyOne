@@ -1,25 +1,40 @@
-import { MapPin, Navigation } from "lucide-react";
+import { MapPin } from "lucide-react";
 
-export const IncidentMap = () => {
-  const incidents = [
-    { id: 1, x: 25, y: 30, severity: "critical", type: "collision" },
-    { id: 2, x: 60, y: 45, severity: "warning", type: "breakdown" },
-    { id: 3, x: 40, y: 70, severity: "info", type: "debris" },
-    { id: 4, x: 75, y: 25, severity: "critical", type: "collision" },
-    { id: 5, x: 15, y: 80, severity: "warning", type: "weather" }
-  ];
+interface Incident {
+  id: string;
+  type: string;
+  severity: string;
+  latitude: number;
+  longitude: number;
+  location_name: string;
+  status: string;
+}
+
+interface IncidentMapProps {
+  incidents: Incident[];
+}
+
+export const IncidentMap = ({ incidents }: IncidentMapProps) => {
+  // Convert lat/lng to map coordinates (simplified for demo)
+  const convertToMapCoords = (lat: number, lng: number) => {
+    // Simple conversion for demo - in real app this would use proper projection
+    const x = ((lng + 122.5) / 0.01) % 100;
+    const y = ((lat - 37.7) / 0.01) % 100;
+    return { x: Math.abs(x), y: Math.abs(y) };
+  };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical": return "text-emergency-critical";
-      case "warning": return "text-emergency-warning";
-      case "info": return "text-emergency-info";
-      default: return "text-emergency-safe";
+      case "critical": return "text-emergency";
+      case "high": return "text-destructive";
+      case "medium": return "text-warning";
+      case "low": return "text-success";
+      default: return "text-muted-foreground";
     }
   };
 
   return (
-    <div className="relative w-full h-96 bg-gradient-control rounded-lg border border-border overflow-hidden">
+    <div className="relative w-full h-96 bg-gradient-to-br from-background to-muted rounded-lg border overflow-hidden">
       {/* Map Background */}
       <div className="absolute inset-0 opacity-20">
         <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -31,7 +46,7 @@ export const IncidentMap = () => {
         </svg>
       </div>
 
-      {/* Control Grid */}
+      {/* Grid overlay */}
       <div className="absolute inset-0 opacity-10">
         <div className="grid grid-cols-10 grid-rows-10 w-full h-full">
           {Array.from({ length: 100 }).map((_, i) => (
@@ -40,43 +55,46 @@ export const IncidentMap = () => {
         </div>
       </div>
 
-      {/* Incident Markers */}
-      {incidents.map((incident) => (
-        <div
-          key={incident.id}
-          className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-          style={{ left: `${incident.x}%`, top: `${incident.y}%` }}
-        >
-          <div className={`relative ${getSeverityColor(incident.severity)}`}>
-            <MapPin className="h-6 w-6 drop-shadow-lg animate-pulse" />
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-card border border-border rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              {incident.type} - {incident.severity}
+      {/* Incident markers */}
+      {incidents.map((incident) => {
+        const coords = convertToMapCoords(incident.latitude, incident.longitude);
+        return (
+          <div
+            key={incident.id}
+            className={`absolute w-4 h-4 -translate-x-2 -translate-y-2 cursor-pointer transition-all duration-200 hover:scale-125 z-10 group ${getSeverityColor(incident.severity)}`}
+            style={{
+              left: `${coords.x}%`,
+              top: `${coords.y}%`,
+            }}
+          >
+            <MapPin className="w-4 h-4" />
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-card border rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+              <div className="text-xs font-medium">{incident.type}</div>
+              <div className="text-xs text-muted-foreground">{incident.location_name}</div>
+              <div className="text-xs text-muted-foreground capitalize">{incident.severity} - {incident.status}</div>
             </div>
           </div>
-        </div>
-      ))}
-
-      {/* Map Controls */}
-      <div className="absolute top-4 right-4 space-y-2">
-        <button className="p-2 bg-card border border-border rounded hover:bg-secondary transition-colors">
-          <Navigation className="h-4 w-4" />
-        </button>
-      </div>
+        );
+      })}
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 bg-card border border-border rounded p-3 space-y-2">
-        <div className="text-xs font-semibold text-foreground mb-2">Severity Levels</div>
+      <div className="absolute bottom-4 left-4 bg-card border rounded p-3 space-y-2">
+        <div className="text-xs font-semibold mb-2">Severity Levels</div>
         <div className="flex items-center space-x-2">
-          <MapPin className="h-3 w-3 text-emergency-critical" />
+          <MapPin className="h-3 w-3 text-emergency" />
           <span className="text-xs text-muted-foreground">Critical</span>
         </div>
         <div className="flex items-center space-x-2">
-          <MapPin className="h-3 w-3 text-emergency-warning" />
-          <span className="text-xs text-muted-foreground">Warning</span>
+          <MapPin className="h-3 w-3 text-destructive" />
+          <span className="text-xs text-muted-foreground">High</span>
         </div>
         <div className="flex items-center space-x-2">
-          <MapPin className="h-3 w-3 text-emergency-info" />
-          <span className="text-xs text-muted-foreground">Info</span>
+          <MapPin className="h-3 w-3 text-warning" />
+          <span className="text-xs text-muted-foreground">Medium</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <MapPin className="h-3 w-3 text-success" />
+          <span className="text-xs text-muted-foreground">Low</span>
         </div>
       </div>
     </div>
