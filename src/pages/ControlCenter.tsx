@@ -38,17 +38,44 @@ const ControlCenter = () => {
         .from("control_users")
         .select("*")
         .eq("user_id", session.user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching control user:", error);
         toast({
-          title: "Access denied",
-          description: "You don't have permission to access the control center.",
+          title: "Database error",
+          description: "Unable to verify control center access.",
           variant: "destructive"
         });
         navigate("/auth");
         return;
+      }
+
+      if (!controlUserData) {
+        // Try to create control user record if it doesn't exist
+        const { data: newControlUser, error: createError } = await supabase
+          .from("control_users")
+          .insert({
+            user_id: session.user.id,
+            name: session.user.email?.split('@')[0] || "Control User",
+            role: "operator"
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error("Error creating control user:", createError);
+          toast({
+            title: "Access denied",
+            description: "Unable to create control center access. Please contact support.",
+            variant: "destructive"
+          });
+          navigate("/auth");
+          return;
+        }
+        setControlUser(newControlUser);
+      } else {
+        setControlUser(controlUserData);
       }
 
       setControlUser(controlUserData);

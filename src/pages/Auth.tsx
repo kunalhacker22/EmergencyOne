@@ -76,8 +76,8 @@ const Auth = () => {
 
       if (error) throw error;
 
-      if (data.user) {
-        // Create control user profile
+      if (data.user && data.session) {
+        // Create control user profile only if user is confirmed
         const { error: profileError } = await supabase
           .from("control_users")
           .insert({
@@ -88,6 +88,17 @@ const Auth = () => {
 
         if (profileError) {
           console.error("Profile creation error:", profileError);
+          toast({
+            title: "Profile creation failed",
+            description: "Please contact support if you can't access the control center.",
+            variant: "destructive"
+          });
+        } else {
+          // If account is already confirmed, redirect immediately
+          if (data.session) {
+            navigate("/control-center");
+            return;
+          }
         }
       }
 
