@@ -8,14 +8,14 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Emergency Response Color System */
-    --background: 220 13% 9%;
+    /* Emergency Response Color System - Enhanced Visibility */
+    --background: 220 15% 12%;
     --foreground: 210 40% 98%;
 
-    --card: 220 13% 11%;
+    --card: 220 14% 16%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 13% 11%;
+    --popover: 220 14% 16%;
     --popover-foreground: 210 40% 98%;
 
     /* Emergency Red - Critical incidents */

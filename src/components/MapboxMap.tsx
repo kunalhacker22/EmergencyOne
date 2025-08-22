@@ -105,31 +105,79 @@ export const MapboxMap = ({ incidents }: MapboxMapProps) => {
     }
   };
 
-  // Fallback view when Mapbox token is not configured
+  // Enhanced fallback view with visible incident map
   return (
-    <div className="relative w-full h-96 bg-gradient-to-br from-background to-muted rounded-lg border overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-center p-6 bg-card border rounded-lg max-w-md">
-          <h3 className="text-lg font-semibold mb-2">Satellite Map Configuration Required</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            To enable satellite view, please configure your Mapbox access token.
-          </p>
-          <div className="text-xs text-muted-foreground space-y-2">
-            <p>1. Go to <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-emergency underline">mapbox.com</a></p>
-            <p>2. Create an account and get your public token</p>
-            <p>3. Contact support to configure the token</p>
+    <div className="relative w-full h-96 bg-gradient-to-br from-card via-muted to-secondary rounded-lg border-2 border-border overflow-hidden">
+      {/* Interactive incident map overlay */}
+      <div className="absolute inset-0 p-4">
+        <div className="relative w-full h-full bg-gradient-to-br from-muted/50 to-card/50 rounded-lg border border-border/50">
+          {/* Grid pattern for map feel */}
+          <div className="absolute inset-0 opacity-10">
+            <svg className="w-full h-full" viewBox="0 0 100 100">
+              <defs>
+                <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#grid)" />
+            </svg>
+          </div>
+          
+          {/* Display incidents as visible markers */}
+          {incidents.map((incident, index) => {
+            const color = getSeverityColor(incident.severity);
+            // Create pseudo-random positions for demonstration
+            const x = 20 + (index * 23) % 60;
+            const y = 20 + (index * 17) % 60;
+            
+            return (
+              <div
+                key={incident.id}
+                className="absolute w-4 h-4 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform"
+                style={{
+                  backgroundColor: color,
+                  left: `${x}%`,
+                  top: `${y}%`,
+                }}
+                title={`${incident.type} - ${incident.location_name} (${incident.severity})`}
+              />
+            );
+          })}
+          
+          {/* Map legend */}
+          <div className="absolute bottom-4 left-4 bg-card/90 backdrop-blur-sm border border-border rounded-lg p-3 text-xs">
+            <div className="font-semibold mb-2 text-foreground">Incident Map</div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <span className="text-muted-foreground">Critical</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                <span className="text-muted-foreground">High</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span className="text-muted-foreground">Medium</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-muted-foreground">Low</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mapbox upgrade notice */}
+          <div className="absolute top-4 right-4 bg-card/90 backdrop-blur-sm border border-border rounded-lg p-3 text-xs max-w-xs">
+            <div className="font-semibold mb-1 text-foreground">Satellite View Available</div>
+            <p className="text-muted-foreground">
+              Configure Mapbox token for satellite imagery at{' '}
+              <a href="https://mapbox.com" target="_blank" rel="noopener noreferrer" className="text-accent underline">
+                mapbox.com
+              </a>
+            </p>
           </div>
         </div>
-      </div>
-      
-      {/* Fallback basic map */}
-      <div className="absolute inset-0 opacity-20">
-        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path d="M0,30 Q50,25 100,30" stroke="currentColor" strokeWidth="0.5" fill="none" />
-          <path d="M0,45 Q50,40 100,45" stroke="currentColor" strokeWidth="0.5" fill="none" />
-          <path d="M0,60 Q50,65 100,60" stroke="currentColor" strokeWidth="0.5" fill="none" />
-          <path d="M0,75 Q50,80 100,75" stroke="currentColor" strokeWidth="0.5" fill="none" />
-        </svg>
       </div>
     </div>
   );
