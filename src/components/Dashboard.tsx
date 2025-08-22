@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Users, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapboxMap } from "./MapboxMap";
+import { LeafletMap } from "./LeafletMap";
 import { IncidentList } from "./IncidentList";
 
 interface DashboardProps {
@@ -99,7 +99,7 @@ export const Dashboard = ({ onUpdateIncidentStatus }: DashboardProps) => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <MapboxMap incidents={incidents} />
+                <LeafletMap incidents={incidents} />
               </CardContent>
             </Card>
           </div>
