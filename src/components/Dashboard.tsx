@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Users, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { LeafletMap } from "./LeafletMap";
 import { IncidentList } from "./IncidentList";
 
 interface DashboardProps {
@@ -88,60 +87,43 @@ export const Dashboard = ({ onUpdateIncidentStatus }: DashboardProps) => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="col-span-2 lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-emergency" />
-                  Incident Locations
-                  {loading && <RefreshCw className="w-4 h-4 animate-spin" />}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LeafletMap incidents={incidents} />
-              </CardContent>
-            </Card>
-          </div>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-warning" />
+                Active Incidents ({incidents.filter(i => i.status === 'active').length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <IncidentList incidents={incidents} onUpdateStatus={onUpdateIncidentStatus} />
+            </CardContent>
+          </Card>
 
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-warning" />
-                  Active Incidents ({incidents.filter(i => i.status === 'active').length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <IncidentList incidents={incidents} onUpdateStatus={onUpdateIncidentStatus} />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-success" />
-                  Response Teams
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Available Units</span>
-                    <Badge variant="secondary">{available}</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">En Route</span>
-                    <Badge variant="outline" className="border-warning text-warning">{enRoute}</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">On Scene</span>
-                    <Badge variant="outline" className="border-emergency text-emergency">{onScene}</Badge>
-                  </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-success" />
+                Response Teams
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Available Units</span>
+                  <Badge variant="secondary">{available}</Badge>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">En Route</span>
+                  <Badge variant="outline" className="border-warning text-warning">{enRoute}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">On Scene</span>
+                  <Badge variant="outline" className="border-emergency text-emergency">{onScene}</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
