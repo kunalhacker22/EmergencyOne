@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Users, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { IncidentList } from "./IncidentList";
+import { MetricsTabs } from "./MetricsTabs";
 
 interface DashboardProps {
   onUpdateIncidentStatus?: (incidentId: string, newStatus: string) => void;
@@ -87,16 +88,18 @@ export const Dashboard = ({ onUpdateIncidentStatus }: DashboardProps) => {
           </p>
         </div>
 
-        <div className="space-y-6">
+        <MetricsTabs incidents={incidents} />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-warning" />
-                Active Incidents ({incidents.filter(i => i.status === 'active').length})
+                Recent Incidents ({incidents.slice(0, 5).length})
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <IncidentList incidents={incidents} onUpdateStatus={onUpdateIncidentStatus} />
+              <IncidentList incidents={incidents.slice(0, 5)} onUpdateStatus={onUpdateIncidentStatus} />
             </CardContent>
           </Card>
 
