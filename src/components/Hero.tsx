@@ -7,8 +7,8 @@ export const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-24 px-6 bg-gradient-to-br from-background to-muted border-b">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative py-24 px-6 bg-hero-animated bg-mesh-pattern border-b overflow-hidden">
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
             <Shield className="h-16 w-16 text-primary mr-4" />
@@ -26,7 +26,7 @@ export const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button 
             size="lg" 
-            className="bg-emergency hover:bg-emergency/90 text-white"
+            className="bg-gradient-to-r from-emergency-critical to-emergency-warning text-white glow-emergency hover:scale-105 transition-all duration-300"
             onClick={() => navigate("/report")}
           >
             <AlertTriangle className="h-5 w-5 mr-2" />
@@ -35,7 +35,7 @@ export const Hero = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="border-emergency text-emergency hover:bg-emergency hover:text-white"
+            className="border-emergency-info text-emergency-info hover:bg-emergency-info hover:text-background backdrop-blur-sm bg-white/5 hover:scale-105 transition-all duration-300"
             onClick={() => navigate("/auth")}
           >
             <Phone className="h-5 w-5 mr-2" />

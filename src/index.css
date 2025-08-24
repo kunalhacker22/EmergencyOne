@@ -46,10 +46,27 @@ All colors MUST be HSL.
     --emergency-safe: 142 76% 36%;
     --emergency-info: 217 91% 60%;
 
-    /* Gradients */
-    --gradient-emergency: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(0 84% 45%) 100%);
-    --gradient-control: linear-gradient(135deg, hsl(215 13% 19%) 0%, hsl(215 13% 15%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(220 13% 9%) 0%, hsl(215 13% 15%) 100%);
+    /* Dynamic Gradient System */
+    --gradient-emergency: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(15 84% 55%) 50%, hsl(0 84% 45%) 100%);
+    --gradient-control: linear-gradient(135deg, hsl(215 13% 19%) 0%, hsl(220 15% 18%) 50%, hsl(215 13% 15%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 15% 12%) 0%, hsl(217 91% 8%) 25%, hsl(0 84% 8%) 75%, hsl(215 13% 15%) 100%);
+    
+    /* Animated Background Gradients */
+    --gradient-hero-animated: linear-gradient(-45deg, hsl(220 15% 12%), hsl(217 91% 10%), hsl(0 84% 12%), hsl(215 13% 15%));
+    --gradient-mesh: radial-gradient(circle at 20% 80%, hsl(0 84% 60% / 0.1) 0%, transparent 50%), 
+                     radial-gradient(circle at 80% 20%, hsl(217 91% 60% / 0.1) 0%, transparent 50%),
+                     radial-gradient(circle at 40% 40%, hsl(43 96% 56% / 0.05) 0%, transparent 50%);
+    
+    /* Tech Grid Pattern */
+    --pattern-grid: linear-gradient(hsl(0 84% 60% / 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, hsl(0 84% 60% / 0.03) 1px, transparent 1px);
+    
+    /* Emergency Radar Effect */
+    --gradient-radar: conic-gradient(from 0deg at 50% 50%, transparent 0deg, hsl(0 84% 60% / 0.1) 90deg, transparent 180deg);
+    
+    /* Data Visualization Pattern */
+    --pattern-circuit: radial-gradient(circle at 25% 25%, hsl(217 91% 60% / 0.05) 2px, transparent 2px),
+                       radial-gradient(circle at 75% 75%, hsl(43 96% 56% / 0.05) 1px, transparent 1px);
 
     --radius: 0.75rem;
 
@@ -116,5 +133,72 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Animated Background Classes */
+  .bg-hero-animated {
+    background: var(--gradient-hero-animated);
+    background-size: 400% 400%;
+    animation: gradient-shift 8s ease infinite;
+  }
+  
+  .bg-mesh-pattern {
+    background-image: var(--gradient-mesh);
+  }
+  
+  .bg-grid-pattern {
+    background-image: var(--pattern-grid);
+    background-size: 50px 50px;
+  }
+  
+  .bg-radar-sweep {
+    background: var(--gradient-radar);
+    animation: radar-sweep 4s linear infinite;
+  }
+  
+  .bg-circuit-pattern {
+    background-image: var(--pattern-circuit);
+    background-size: 100px 100px;
+  }
+
+  /* Glow Effects */
+  .glow-emergency {
+    box-shadow: 0 0 50px hsl(var(--emergency-critical) / 0.2);
+  }
+  
+  .glow-safe {
+    box-shadow: 0 0 30px hsl(var(--emergency-safe) / 0.3);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--emergency-critical) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--emergency-critical) / 0.6);
   }
 }

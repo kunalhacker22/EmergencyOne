@@ -35,11 +35,11 @@ export const StatsOverview = () => {
   ];
 
   return (
-    <section className="py-12 px-6 bg-muted/30">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-12 px-6 bg-grid-pattern bg-muted/30 relative">
+      <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
-            <Card key={index} className="relative overflow-hidden">
+            <Card key={index} className="relative overflow-hidden backdrop-blur-sm bg-card/80 border-border/50 hover:bg-card/90 transition-all duration-300 hover:scale-105 glow-safe">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
                   <stat.icon className="h-4 w-4 mr-2" />
