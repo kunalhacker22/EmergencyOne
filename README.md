@@ -1,73 +1,67 @@
-# Welcome to your Lovable project
+# 🚨 EmergencyOne  
+*Faster, smarter, and more coordinated emergency response for highways.*  
 
-## Project info
+![License](https://img.shields.io/badge/license-MIT-blue.svg)  
+![Status](https://img.shields.io/badge/status-In%20Development-orange)  
+![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Web-green)  
 
-**URL**: https://lovable.dev/projects/d5a198b9-6085-4616-88f0-ae4d340dcb1e
+---
 
-## How can I edit this code?
+## 🌟 Overview  
+**EmergencyOne** is a multi-stakeholder platform designed to **minimize loss of life and injury on highways** by ensuring rapid and coordinated emergency responses.  
+The system connects **public users, responders, and control rooms** through a unified, real-time platform.  
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## 🚀 Key Features  
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d5a198b9-6085-4616-88f0-ae4d340dcb1e) and start prompting.
+### ✅ Phase 1 (MVP)  
+- 📱 **Public Android App**  
+  - One-tap accident reporting (anonymous by default)  
+  - Auto-location tagging via GPS  
+  - Optional photo/video uploads  
+  - Push notifications for follow-up (if opted in)  
 
-Changes made via Lovable will be committed automatically to this repo.
+- 🖥️ **Control Room Web Dashboard**  
+  - Live accident pins with severity color coding  
+  - Real-time notifications for every incident  
+  - Role-based secure access  
+  - Optional traffic overlay  
 
-**Use your preferred IDE**
+### 🔜 Future Phases  
+- 🚑 **Responder Dashboard** (tablet/web) with live alerts & route optimization  
+- 🍏 **iOS App** support  
+- 🤖 **AI Crash Detection** (via CCTV & IoT)  
+- 📊 Advanced analytics, heatmaps & predictive risk zones  
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🏗️ Architecture (High-Level)  
 
-Follow these steps:
+- **Frontend:** Android (public), Web (dashboards)  
+- **Backend:** Cloud-managed database (Firebase / AWS DynamoDB)  
+- **Storage:** Cloud object storage (S3 or equivalent)  
+- **Messaging:** Push notifications (Firebase Cloud Messaging / MQTT)  
+- **Security:** HTTPS/TLS, server-side encryption, role-based access
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🏃‍♀️ EmergencyOne Web App
 
-# Step 3: Install the necessary dependencies.
-npm i
+**URL**: https://emergency-one-omega.vercel.app/
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## 📧 Contact
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+For any inquiries or feedback, please feel free to reach out to:
+* **Kunal Srivastava** kunalsrivastava0406@gmail.com | https://www.linkedin.com/in/kunal-srivastava-/ 
 
-**Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/d5a198b9-6085-4616-88f0-ae4d340dcb1e) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```mermaid
+flowchart LR
+  User(Public User) -->|Report Accident| API[EmergencyOne API]
+  API -->|Store| DB[(Cloud Database)]
+  API -->|Send Media| Storage[(Object Storage)]
+  API -->|Alert| ControlRoom(Control Room Dashboard)
+  ControlRoom --> Responders(Responder Dashboard - Phase 2)
